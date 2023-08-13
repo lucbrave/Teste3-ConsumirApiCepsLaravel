@@ -1,0 +1,11 @@
+Para conseguir utilizar, deve se utilizar o comando php artisan serve dentro da pasta no projeto na linha de comando ,para isso e necessario que o laravel esteja instalado.
+
+A rota utilizada para o iniciar o projeto sera http://127.0.0.1:8000/ceps  
+
+A Busca de usuario git funciona da seguinte forma
+
+O usuário deve digitar um ou mais cpf(s) valido(s) no input,caso seja mais de um devem ser separados por ";"  e clicar no botão "Clique para buscar o cep" e o sistema trara uma table com as informações do(s) cep(s) digitado(s);
+
+Com as informações carregadas o usuario podera clicar no botao "Clique para exportar CSV da tabela" para exportar os dados do(s) cpf(s) encontrados para um arquivo csv com os campos separados por ,  
+
+Caso o usuario queira podera clicar no botão "Limpar tabela" para esvaziar a tabela.
