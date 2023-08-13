@@ -3,7 +3,7 @@
       @csrf
       <span>Para buscar mais de um cep, separe-os por ; ex:(00000-000;00000000;00000-000)</span>
       <br>
-      <label for="cepBusca" >CEP:</label>
+      <label for="cepBusca" class="blue">CEP:</label>
       <input style="width:180px" type="text" name="cepBusca" id="cepBusca" value="" placeholder="NNNNNNNN ou NNNNN-NNN">
       <button id="buscar" name="submitbutton"   type="submit" value="buscar" >Clique para buscar o cep</button>
       <button id="exportar" name="submitbutton" type="submit" value="csv">Clique para exportar CSV da tabela </button>
@@ -17,7 +17,8 @@
             {{$MensagemCepVazio}}
             <input type="hidden" id="mensagemCepVazio" name="mensagemCepVazio" value="{{$MensagemCepVazio}}">
          @endif
-         @if(isset($ceps))   
+         @if(isset($ceps)) 
+            <br>  
             <table>
                <tr class='tabelaBorda' >
                   <td class='tabelaBorda' >CEP</td>

@@ -10,10 +10,10 @@
         <title >Buscar Ceps</title>
         <link href="{{ asset('css/main.css') }}" rel="stylesheet" type="text/css">
     </head>
-    <body>
+    <body class="tela">
 
     <div class='container'>
-        <h1 class="vermelho" >{{$title}}</h1>
+        <h1 class="blue" >{{$title}}</h1>
       
         {{$slot}}
     </div>
