@@ -61,6 +61,12 @@ class CepsController extends Controller
 
     function exportarCsv(Request $request){
 
+        if($request->input('mensagemCepVazio')!='' || $request->input('mensagemTabelaVazia')!='' ){
+            $MensagemCepVazio="Nao e possivel exportar tabela vazia";
+            return view('ceps.index',["MensagemCepVazio"=>$MensagemCepVazio]);
+               
+        }
+
         $cepsBusca = $request->input('cepsTabela'); 
         $ceps = explode(";", $cepsBusca);
 

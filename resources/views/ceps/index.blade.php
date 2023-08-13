@@ -10,8 +10,12 @@
       <button id="limpar" name="submitbutton" type="submit" value="limpar">Limpar Tabela</button>
       <div id="Cep"> 
          @csrf
+         @if(isset($ceps) && (sizeof($ceps)==0))
+            <input type="hidden" id="mensagemTabelaVazia" name="mensagemTabelaVazia" value="tabelavazia">
+         @endif
          @if(isset($MensagemCepVazio)) 
             {{$MensagemCepVazio}}
+            <input type="hidden" id="mensagemCepVazio" name="mensagemCepVazio" value="{{$MensagemCepVazio}}">
          @endif
          @if(isset($ceps))   
             <table>
