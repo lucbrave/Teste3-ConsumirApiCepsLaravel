@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 
 Route::get('/ceps', [CepsController::class, 'index']);
-Route::post('/ceps/consultar', [CepsController::class, 'conectarApi']);
+Route::post('/ceps/escolher', [CepsController::class, 'escolherCaminho']);
 
 Route::post('/ceps/exportar', [CepsController::class, 'exportarCsv']);
 

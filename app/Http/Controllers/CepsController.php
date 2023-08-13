@@ -41,156 +41,52 @@ class CepsController extends Controller
     }
 
     
-    function conectarApi(Request $request){
+    function escolherCaminho(Request $request){
 
       if($request->submitbutton=='csv'){
         return $this->exportarCsv($request);
 
       }
+
       if($request->submitbutton=='limpar'){
         return $this->limparTabela($request);
 
       }
-      $cepsBusca = $request->input('cepBusca');
 
-      
-      
-      $ceps = explode(";", $cepsBusca);
-      
-      
+      if($request->submitbutton=='buscar'){
+        return $this->mandarDadoView($request);
 
-      $table= "<br>
-      <table class='tabelaBorda'>
-        <tr class='tabelaBorda' > 
-            <td class='tabelaBorda' >CEP</td>
-            <td class='tabelaBorda' >ENDERECO</td>
-            <td class='tabelaBorda' >COMPLEMENTO</td>
-            <td class='tabelaBorda' >BAIRRO</td>
-            <td class='tabelaBorda' >CIDADE</td>
-            <td class='tabelaBorda' >UF</td>
-            <td class='tabelaBorda' >IBGE</td>
-            <td class='tabelaBorda' >GIA</td>
-            <td class='tabelaBorda' >DDD</td>
-            <td class='tabelaBorda' >SIAFI</td>
-        </tr>";
-
-
-      foreach ($ceps as $cepBusca) {
-
-        if (!$this->validarCep($cepBusca)){
-            $table.=  "<tr class='tabelaBorda' >
-                     <td class='tabelaBorda' >Cep $cepBusca Invalido</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                     <td class='tabelaBorda' >-</td>
-                   </tr>";
-        }
-        else{
-            //$response = Http::get('https://viacep.com.br/ws/'.$cepBusca.'/json/');
-            $response = file_get_contents("https://viacep.com.br/ws/".$cepBusca."/json/");
-            $cep = json_decode($response, true);
-           
-            if ( ( !( empty($cep['cep']) ) ) ) {          
-               $table.=  "<tr class='tabelaBorda' >
-                        <td class='tabelaBorda' >".$cep['cep']."</td>
-                        <td class='tabelaBorda' >".$cep['logradouro']."</td>
-                        <td class='tabelaBorda' >".$cep['complemento']."</td>
-                        <td class='tabelaBorda' >".$cep['bairro']."</td>
-                        <td class='tabelaBorda' >".$cep['localidade']."</td>
-                        <td class='tabelaBorda' >".$cep['uf']."</td>
-                        <td class='tabelaBorda' >".$cep['ibge']."</td>
-                        <td class='tabelaBorda' >".$cep['gia']."</td>
-                        <td class='tabelaBorda' >".$cep['ddd']."</td>
-                        <td class='tabelaBorda' >".$cep['siafi']."</td>
-                    </tr>";            
-            }          
-            else {
-               $table.=  "<tr class='tabelaBorda' >
-                       <td class='tabelaBorda' >Cep $cepBusca Nao Encontrado</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                       <td class='tabelaBorda' >-</td>
-                    </tr>";
-            }
-
-                    
-          }
-      }
-      $table.=  "</table>";
-
-
-      $headers = array(
-          'Content-Type' => 'text/csv'
-        );        
-
-        //criar o arquivo
-        $filename = "cepsInterno.csv";
-        $arquivo = fopen($filename, 'w');
-
-        //adicionar primeira linha
-        fputcsv($arquivo, [
-            'cep',
-            'logradouro',
-            'complemento',
-            'bairro',
-            'localidade',
-            'uf',
-            'ibge',
-            'gia',
-            'ddd',
-            'siafi'
-
-        ]);
-
-    echo view('ceps.index'); 
-    echo $table;     
-    echo '<script>document.getElementById("cepBusca").value="'.$cepsBusca.'";</script>';
-
-     
-      
+      }  
     }
 
     function exportarCsv(Request $request){
-        $cepsBusca = $request->input('cepBusca');  
+
+        $cepsBusca = $request->input('cepsTabela'); 
         $ceps = explode(";", $cepsBusca);
 
-       
-        
         $informacoesCep=array();
         foreach ($ceps as $cepBusca) {
             if (!$this->validarCep($cepBusca)){
-                $informacoesCep[]=array('Cep '.$cepBusca.' Invalido','-','-','-','-','-','-','-','-','-');
+                $informacoesCep[]=array("cep"=>'Cep '.$cepBusca.' Invalido',"logradouro"=>'-',"complemento"=>'-',"bairro"=>'-',"localidade"=>'-',"uf"=>'-',"ibge"=>'-',"gia"=>'-',"ddd"=>'-',"siafi"=>'-');
 
             }
             else{
                 $response = file_get_contents("https://viacep.com.br/ws/".$cepBusca."/json/");
                 $cep = json_decode($response, true);
                 if ( ( !( empty($cep['cep']) ) )  ) {
-                    $informacoesCep[]=array($cep['cep'],
-                                            $cep['logradouro'],
-                                            $cep['complemento'],
-                                            $cep['bairro'],
-                                            $cep['localidade'],
-                                            $cep['uf'],
-                                            $cep['ibge'],
-                                            $cep['gia'],
-                                            $cep['ddd'],
-                                            $cep['siafi'] );
+                    $informacoesCep[]=array("cep"=>$cep['cep'],
+                                            "logradouro"=>$cep['logradouro'],
+                                            "complemento"=>$cep['complemento'],
+                                            "bairro"=>$cep['bairro'],
+                                            "localidade"=>$cep['localidade'],
+                                            "uf"=>$cep['uf'],
+                                            "ibge"=>$cep['ibge'],
+                                            "gia"=>$cep['gia'],
+                                            "ddd"=>$cep['ddd'],
+                                            "siafi"=>$cep['siafi'] );
 
                 }else{
-                    $informacoesCep[]=array('Cep '.$cepBusca.' Nao Encontrado','-','-','-','-','-','-','-','-','-');
+                    $informacoesCep[]=array("cep"=>'Cep '.$cepBusca.' Nao Encontrado',"logradouro"=>'-',"complemento"=>'-',"bairro"=>'-',"localidade"=>'-',"uf"=>'-',"ibge"=>'-',"gia"=>'-',"ddd"=>'-',"siafi"=>'-');;
                 }
             }
 
@@ -224,7 +120,7 @@ class CepsController extends Controller
 
         foreach ($informacoesCep as $linhaCep) {
 
-            fputcsv($arquivo, array($linhaCep[0],$linhaCep[1],$linhaCep[2],$linhaCep[3],$linhaCep[4],$linhaCep[5],$linhaCep[6],$linhaCep[7],$linhaCep[8],$linhaCep[9]), ',');
+            fputcsv($arquivo, array($linhaCep['cep'],$linhaCep['logradouro'],$linhaCep['complemento'],$linhaCep['bairro'],$linhaCep['localidade'],$linhaCep['uf'],$linhaCep['ibge'],$linhaCep['gia'],$linhaCep['ddd'],$linhaCep['siafi']), ',');
             
         }
 
@@ -238,25 +134,54 @@ class CepsController extends Controller
     }
 
     function limparTabela(Request $request){
-        $cepsBusca = $request->input('cepBusca');  
-        echo view('ceps.index');
-        echo '<script>document.getElementById("cepBusca").value="'.$cepsBusca.'";</script>';
-        $table= "<br>
-        <table class='tabelaBorda'>
-            <tr class='tabelaBorda' > 
-            <td class='tabelaBorda' >CEP</td>
-            <td class='tabelaBorda' >ENDERECO</td>
-            <td class='tabelaBorda' >COMPLEMENTO</td>
-            <td class='tabelaBorda' >BAIRRO</td>
-            <td class='tabelaBorda' >CIDADE</td>
-            <td class='tabelaBorda' >UF</td>
-            <td class='tabelaBorda' >IBGE</td>
-            <td class='tabelaBorda' >GIA</td>
-            <td class='tabelaBorda' >DDD</td>
-            <td class='tabelaBorda' >SIAFI</td>
-        </tr>";
-        echo $table;
+        $ceps=array();
+        $CepsTabela="";
+        return view('ceps.index', ["ceps"=>$ceps],["CepsTabela"=>$CepsTabela]);
 
+    }
+
+    function mandarDadoView(Request $request){
+        if($request->input('cepBusca')==''){
+            $MensagemCepVazio="Digite um Cep";
+            return view('ceps.index',["MensagemCepVazio"=>$MensagemCepVazio]);
+               
+        }
+        $MensagemCepVazio="";
+        $cepsBusca = $request->input('cepBusca');  
+        $cepsBuscaArray = explode(";", $cepsBusca);
+
+        $ceps=array();
+        foreach ($cepsBuscaArray as $cepBusca) {
+            if (!$this->validarCep($cepBusca)){
+                $ceps[]=array("cep"=>'Cep '.$cepBusca.' Invalido',"logradouro"=>'-',"complemento"=>'-',"bairro"=>'-',"localidade"=>'-',"uf"=>'-',"ibge"=>'-',"gia"=>'-',"ddd"=>'-',"siafi"=>'-');
+
+            }
+            else{
+                $response = file_get_contents("https://viacep.com.br/ws/".$cepBusca."/json/");
+                $cep = json_decode($response, true);
+                if ( ( !( empty($cep['cep']) ) )  ) {
+                    $ceps[]=array("cep"=>$cep['cep'],
+                                            "logradouro"=>$cep['logradouro'],
+                                            "complemento"=>$cep['complemento'],
+                                            "bairro"=>$cep['bairro'],
+                                            "localidade"=>$cep['localidade'],
+                                            "uf"=>$cep['uf'],
+                                            "ibge"=>$cep['ibge'],
+                                            "gia"=>$cep['gia'],
+                                            "ddd"=>$cep['ddd'],
+                                            "siafi"=>$cep['siafi'] );
+
+                }else{
+                    $ceps[]=array("cep"=>'Cep '.$cepBusca.' Nao Encontrado',"logradouro"=>'-',"complemento"=>'-',"bairro"=>'-',"localidade"=>'-',"uf"=>'-',"ibge"=>'-',"gia"=>'-',"ddd"=>'-',"siafi"=>'-');
+                }
+            }
+
+        }
+        
+
+        
+        $CepsTabela=$cepsBusca;
+        return view('ceps.index', ["ceps"=>$ceps],["CepsTabela"=>$CepsTabela]);
     }
     
 }
