@@ -6,7 +6,7 @@
       <label for="cepBusca" >CEP:</label>
       <input style="width:180px" type="text" name="cepBusca" id="cepBusca" value="" placeholder="NNNNNNNN ou NNNNN-NNN">
       <button id="buscar" name="submitbutton"   type="submit" value="buscar" >Clique para buscar o cep</button>
-      <button id="exportar" name="submitbutton" type="submit" value="csv">Clique exportar CSV</button>
+      <button id="exportar" name="submitbutton" type="submit" value="csv">Clique para exportar CSV da tabela </button>
       <button id="limpar" name="submitbutton" type="submit" value="limpar">Limpar Tabela</button>
       <div id="Cep"> 
          @csrf
